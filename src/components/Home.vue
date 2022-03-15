@@ -1,13 +1,13 @@
 <template>
-  <v-card class="mx-auto" max-width="500">
-    <v-toolbar color="elevation-0">
-      <v-spacer></v-spacer>
+  <v-card class="mx-auto" max-width="1200">
+    <!-- <v-toolbar color="elevation-0">
+      <v-spacer></v-spacer> -->
 
-      <v-btn>Refresh</v-btn>
-      <v-btn class="ml-3">Add Symbol</v-btn>
-    </v-toolbar>
-
-    <v-container fluid>
+    <!-- <v-btn>Refresh</v-btn>
+      <v-btn class="ml-3" @click="addSymbol">Add Symbol</v-btn> -->
+    <!-- </v-toolbar> -->
+    <SymbolList />
+    <!-- <v-container fluid>
       <v-card class="mx-auto" max-width="500">
         <v-list>
           <v-list-item v-for="(item, i) in items" :key="i">
@@ -17,21 +17,12 @@
           </v-list-item>
         </v-list>
       </v-card>
-    </v-container>
-    <div class="text-center">
-      <v-btn
-        :disabled="loading"
-        :loading="loading"
-        class="white--text"
-        color="purple darken-2"
-        @click="getSymbols"
-      >
-        Start loading
-      </v-btn>
+    </v-container> -->
+    <!-- <div class="text-center">
       <v-dialog v-model="loading" hide-overlay persistent width="300">
         <v-card color="primary" dark>
           <v-card-text>
-            Please stand by
+            Loading
             <v-progress-linear
               indeterminate
               color="white"
@@ -40,27 +31,47 @@
           </v-card-text>
         </v-card>
       </v-dialog>
-    </div>
+    </div> -->
+    <!-- <v-dialog v-model="dialog" scrollable class="sa">
+      <v-toolbar dark color="teal">
+        <v-toolbar-title>Search Coin...</v-toolbar-title>
+        <v-autocomplete
+          v-model="select"
+          :loading="loading"
+          :items="hello"
+          :search-input.sync="search"
+          cache-items
+          clearable
+          class="mx-4"
+          flat
+          hide-no-data
+          hide-details
+          label="What state are you from?"
+          solo-inverted
+        ></v-autocomplete>
+        <v-btn icon>
+          <v-icon>mdi-dots-vertical</v-icon>
+        </v-btn>
+      </v-toolbar>
+     
+    </v-dialog> -->
   </v-card>
 </template>
 
 <script>
+import SymbolList from "../components/SymbolList.vue";
 export default {
+  components: {
+    SymbolList,
+  },
   data() {
     return {
+      isLoading: false,
+      items: [],
+      dialog: false,
       loading: false,
-      items: [
-        {
-          text: "Item 1",
-        },
-        {
-          text: "Item 2",
-        },
-        {
-          text: "Item 3",
-        },
-      ],
-      model: 0,
+      search: null,
+      select: null,
       bars: [
         { class: "" },
         { class: "", dark: true },
@@ -86,13 +97,48 @@ export default {
       ],
     };
   },
+  watch: {
+    search(val) {
+      val && val !== this.select && this.querySelections(val);
+    },
+  },
   methods: {
-    getSymbols() {
-      this.loading = true;
+    querySelections(v) {
+      //   this.loading = true;
+      // Simulated ajax query
       setTimeout(() => {
+        let items = this.items.filter((e) => {
+          return (
+            (e.symbol || "").toLowerCase().indexOf((v || "").toLowerCase()) > -1
+          );
+        });
+        this.hello = items.map((item) => item.symbol);
+        console.log("letitems", items);
+        // this.loading = false;
+      }, 500);
+
+      console.log("this.items", this.items);
+    },
+    async addSymbol() {
+      this.loading = true;
+
+      const response = await this.$axios.get("api/v3/ticker/24hr");
+      if (response.status === 200) {
+        // this.options = response.data.map((item) => {
+        //   return item.symbol;
+        // });
+        this.items = response.data.map((item) => {
+          return {
+            symbol: item.symbol,
+            lastPrice: item.lastPrice,
+          };
+        });
         this.loading = false;
-      }, 2000);
+        this.dialog = true;
+      }
     },
   },
 };
 </script>
+<style>
+</style>
