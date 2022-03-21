@@ -12,7 +12,7 @@
       </v-list-item-content>
       <v-list-item-action class="list-item-action">
         <span>Last Checked: {{ updatedDate }}</span>
-        <v-btn icon>
+        <v-btn icon class="ml-1">
           <v-icon color="grey lighten-1" @click="deleteCoin"
             >mdi-delete-empty</v-icon
           >
