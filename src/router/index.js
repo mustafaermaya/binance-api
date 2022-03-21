@@ -3,10 +3,10 @@ import VueRouter from "vue-router"
 
 Vue.use(VueRouter);
 
-import SymbolList from "../components/SymbolList"
+import Coins from "../components/Coins"
 
 const routes = [
-    { path: '/', component: SymbolList }
+    { path: '/', component: Coins }
 ];
 
 export const router = new VueRouter({
