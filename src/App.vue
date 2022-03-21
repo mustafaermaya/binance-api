@@ -1,8 +1,8 @@
 <template>
   <v-app>
     <v-main>
-      <!-- route outlet -->
-      <!-- component matched by the route will render here -->
+      <v-card class="mx-auto" max-width="1200"> </v-card>
+
       <router-view></router-view>
     </v-main>
   </v-app>
